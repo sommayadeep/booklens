@@ -10,3 +10,4 @@ chromadb>=0.5,<2.0
 sentence-transformers>=2.7,<6.0
 numpy>=1.26,<3.0
 pymysql>=1.1,<2.0
+gunicorn
