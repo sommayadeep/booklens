@@ -1,0 +1,22 @@
+{
+  "books": [
+    {
+      "title": "Atomic Habits",
+      "author": "James Clear",
+      "rating": 4.8,
+      "reviews_count": 12000,
+      "description": "A practical guide to building good habits and breaking bad ones through tiny, repeatable systems.",
+      "book_url": "https://example.com/books/atomic-habits",
+      "image_url": "https://images.unsplash.com/photo-1512820790803-83ca734da794"
+    },
+    {
+      "title": "Dune",
+      "author": "Frank Herbert",
+      "rating": 4.6,
+      "reviews_count": 9800,
+      "description": "An epic science fiction saga about power, ecology, and destiny on the desert planet Arrakis.",
+      "book_url": "https://example.com/books/dune",
+      "image_url": "https://images.unsplash.com/photo-1519682577862-22b62b24e493"
+    }
+  ]
+}
