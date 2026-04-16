@@ -16,13 +16,10 @@ class EmbeddingService:
 
     @lru_cache(maxsize=1)
     def _sentence_model(self):
-        model_name = os.getenv("LOCAL_EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
-        try:
-            from sentence_transformers import SentenceTransformer
-
-            return SentenceTransformer(model_name)
-        except Exception:
-            return None
+        # Disabled PyTorch/sentence-transformers to prevent massive 500MB+ OOM crashes on Render free tier.
+        # This forces the app to use the ultra-lightweight deterministic hash embeddings fallback
+        # which guarantees it stays well under the 512MB RAM limit and stabilizes the API.
+        return None
 
     def embed_text(self, text: str) -> List[float]:
         text = (text or "").strip()

@@ -21,11 +21,8 @@ BASE_URL = "https://books.toscrape.com/"
 
 
 def scrape_books(*, pages: int = 2, max_books: int = 40) -> List[Dict]:
-    # Selenium is useful for small crawls, but for large ingests it can be a bottleneck.
-    if pages <= 5 and max_books <= 200:
-        books = _scrape_with_selenium(pages, max_books)
-        if books:
-            return books
+    # Selenium consumes too much memory (500MB+) for Render free tier, causing OOM kills & network failures.
+    # We will solely rely on requests parsing.
     books = _scrape_with_requests(pages, max_books)
     if books:
         return books
