@@ -21,11 +21,11 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export function getBooks() {
-  return apiFetch<BookListResponse>("/books/");
+  return apiFetch<BookListResponse>("/api/books/");
 }
 
 export async function getAllBooks() {
-  let nextPath: string | null = "/books/";
+  let nextPath: string | null = "/api/books/";
   const aggregated: Book[] = [];
 
   while (nextPath) {
@@ -56,15 +56,15 @@ export async function getAllBooks() {
 }
 
 export function getBook(id: string | number) {
-  return apiFetch<Book>(`/books/${id}/`);
+  return apiFetch<Book>(`/api/books/${id}/`);
 }
 
 export function getStats() {
-  return apiFetch<BookStats>("/books/stats/");
+  return apiFetch<BookStats>("/api/books/stats/");
 }
 
 export function getRecommendations(id: string | number) {
-  return apiFetch<{ book_id: number; recommendations: Book[] }>(`/books/${id}/recommendations/`);
+  return apiFetch<{ book_id: number; recommendations: Book[] }>(`/api/books/${id}/recommendations/`);
 }
 
 export function scrapeBooks(
@@ -82,7 +82,7 @@ export function scrapeBooks(
     total_processed: number;
     ai_processed_count: number;
     indexed_chunks: number;
-  }>("/books/scrape/", {
+  }>("/api/books/scrape/", {
     method: "POST",
     body: JSON.stringify({
       pages,
@@ -94,7 +94,7 @@ export function scrapeBooks(
 }
 
 export function askQuestion(payload: { question: string; book_id?: number | null }) {
-  return apiFetch<RagAnswer>("/rag/ask/", {
+  return apiFetch<RagAnswer>("/api/rag/ask/", {
     method: "POST",
     body: JSON.stringify(payload),
   });
