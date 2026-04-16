@@ -40,13 +40,14 @@ class BookViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["post"], url_path="scrape")
     def scrape_and_process(self, request):
+        # Lowered defaults for demo speed
         serializer = ScrapeRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        pages = serializer.validated_data["pages"]
-        max_books = serializer.validated_data["max_books"]
+        pages = serializer.validated_data.get("pages", 2)
+        max_books = serializer.validated_data.get("max_books", 10)
         process_ai = serializer.validated_data.get("process_ai", True)
-        ai_limit = serializer.validated_data.get("ai_limit", 120)
+        ai_limit = serializer.validated_data.get("ai_limit", 10)
 
         raw_books = scrape_books(pages=pages, max_books=max_books)
         if not raw_books:
@@ -57,6 +58,41 @@ class BookViewSet(viewsets.ModelViewSet):
 
         insight_service = InsightService()
         rag_service = RagService()
+    @action(detail=False, methods=["post"], url_path="demo-upload")
+    def demo_upload(self, request):
+        """Instantly load fallback/sample books for demo speed."""
+        from .services.scraper import _fallback_books
+        fallback_books = _fallback_books(max_books=8)
+        insight_service = InsightService()
+        rag_service = RagService()
+        created = 0
+        indexed_chunks = 0
+        processed_books = []
+        for item in fallback_books:
+            defaults = {
+                "title": item["title"],
+                "author": item.get("author") or "Unknown",
+                "rating": item.get("rating") or 0,
+                "reviews_count": item.get("reviews_count") or 0,
+                "description": item.get("description", ""),
+                "image_url": item.get("image_url", ""),
+                "metadata": item.get("metadata", {}),
+            }
+            book, was_created = Book.objects.update_or_create(book_url=item["book_url"], defaults=defaults)
+            if was_created:
+                created += 1
+            insight_service.enrich_book(book)
+            indexed_chunks += rag_service.index_book(book)
+            processed_books.append({"id": book.id, "title": book.title})
+        return Response(
+            {
+                "detail": "Demo books uploaded and processed.",
+                "created": created,
+                "indexed_chunks": indexed_chunks,
+                "books": processed_books,
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
         created = 0
         updated = 0

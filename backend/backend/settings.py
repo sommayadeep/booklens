@@ -52,8 +52,13 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = "backend.wsgi.application"
 ASGI_APPLICATION = "backend.asgi.application"
+
+# Celery configuration for async AI processing
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/0")
 
 if os.getenv("MYSQL_DATABASE"):
     DATABASES = {
