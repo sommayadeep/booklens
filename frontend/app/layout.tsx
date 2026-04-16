@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+
+
 import { Navbar } from "@/components/navbar";
 
 import "./globals.css";
@@ -9,7 +11,7 @@ export const metadata: Metadata = {
   description: "AI-powered book analysis with RAG-based Q&A",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className="font-sans text-body antialiased">

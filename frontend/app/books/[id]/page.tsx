@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { isLoggedIn } from "@/lib/auth";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowUpRight, Star } from "lucide-react";
@@ -10,6 +12,12 @@ import { getBook, getRecommendations } from "@/lib/api";
 import type { Book } from "@/types";
 
 export default function BookDetailPage() {
+  const router = useRouter();
+  useEffect(() => {
+    if (typeof window !== "undefined" && !isLoggedIn()) {
+      router.replace("/login");
+    }
+  }, []);
   const params = useParams<{ id: string }>();
   const id = params?.id;
 

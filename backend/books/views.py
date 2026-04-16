@@ -58,42 +58,6 @@ class BookViewSet(viewsets.ModelViewSet):
 
         insight_service = InsightService()
         rag_service = RagService()
-    @action(detail=False, methods=["post"], url_path="demo-upload")
-    def demo_upload(self, request):
-        """Instantly load fallback/sample books for demo speed."""
-        from .services.scraper import _fallback_books
-        fallback_books = _fallback_books(max_books=8)
-        insight_service = InsightService()
-        rag_service = RagService()
-        created = 0
-        indexed_chunks = 0
-        processed_books = []
-        for item in fallback_books:
-            defaults = {
-                "title": item["title"],
-                "author": item.get("author") or "Unknown",
-                "rating": item.get("rating") or 0,
-                "reviews_count": item.get("reviews_count") or 0,
-                "description": item.get("description", ""),
-                "image_url": item.get("image_url", ""),
-                "metadata": item.get("metadata", {}),
-            }
-            book, was_created = Book.objects.update_or_create(book_url=item["book_url"], defaults=defaults)
-            if was_created:
-                created += 1
-            insight_service.enrich_book(book)
-            indexed_chunks += rag_service.index_book(book)
-            processed_books.append({"id": book.id, "title": book.title})
-        return Response(
-            {
-                "detail": "Demo books uploaded and processed.",
-                "created": created,
-                "indexed_chunks": indexed_chunks,
-                "books": processed_books,
-            },
-            status=status.HTTP_201_CREATED,
-        )
-
         created = 0
         updated = 0
         indexed_chunks = 0
@@ -129,6 +93,42 @@ class BookViewSet(viewsets.ModelViewSet):
                 "updated": updated,
                 "total_processed": len(processed_books),
                 "ai_processed_count": ai_processed_count,
+                "indexed_chunks": indexed_chunks,
+                "books": processed_books,
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+    @action(detail=False, methods=["post"], url_path="demo-upload")
+    def demo_upload(self, request):
+        """Instantly load fallback/sample books for demo speed."""
+        from .services.scraper import _fallback_books
+        fallback_books = _fallback_books(max_books=8)
+        insight_service = InsightService()
+        rag_service = RagService()
+        created = 0
+        indexed_chunks = 0
+        processed_books = []
+        for item in fallback_books:
+            defaults = {
+                "title": item["title"],
+                "author": item.get("author") or "Unknown",
+                "rating": item.get("rating") or 0,
+                "reviews_count": item.get("reviews_count") or 0,
+                "description": item.get("description", ""),
+                "image_url": item.get("image_url", ""),
+                "metadata": item.get("metadata", {}),
+            }
+            book, was_created = Book.objects.update_or_create(book_url=item["book_url"], defaults=defaults)
+            if was_created:
+                created += 1
+            insight_service.enrich_book(book)
+            indexed_chunks += rag_service.index_book(book)
+            processed_books.append({"id": book.id, "title": book.title})
+        return Response(
+            {
+                "detail": "Demo books uploaded and processed.",
+                "created": created,
                 "indexed_chunks": indexed_chunks,
                 "books": processed_books,
             },

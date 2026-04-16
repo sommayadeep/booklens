@@ -1,6 +1,8 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { isLoggedIn } from "@/lib/auth";
 import Link from "next/link";
 
 import { GlassPanel } from "@/components/glass-panel";
@@ -16,6 +18,12 @@ type ChatMessage = {
 };
 
 export default function AskPage() {
+  const router = useRouter();
+  useEffect(() => {
+    if (typeof window !== "undefined" && !isLoggedIn()) {
+      router.replace("/login");
+    }
+  }, []);
   const [books, setBooks] = useState<Book[]>([]);
   const [selectedBookId, setSelectedBookId] = useState<string>("");
   const [question, setQuestion] = useState("");

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { isLoggedIn } from "@/lib/auth";
 import Link from "next/link";
 import { Search } from "lucide-react";
 
@@ -19,9 +21,15 @@ const defaultStats: BookStats = {
 };
 
 export default function DashboardPage() {
+  const router = useRouter();
+  useEffect(() => {
+    if (typeof window !== "undefined" && !isLoggedIn()) {
+      router.replace("/login");
+    }
+  }, []);
   const BOOKS_PER_PAGE = 12;
-  const AUTO_SCRAPE_PAGES = 50;
-  const AUTO_SCRAPE_MAX_BOOKS = 1000;
+  const AUTO_SCRAPE_PAGES = 2;
+  const AUTO_SCRAPE_MAX_BOOKS = 20;
   const [books, setBooks] = useState<Book[]>([]);
   const [stats, setStats] = useState<BookStats>(defaultStats);
   const [loading, setLoading] = useState(true);
@@ -105,7 +113,6 @@ export default function DashboardPage() {
         <div className="pointer-events-none absolute -right-16 bottom-0 h-52 w-52 rounded-full bg-accent/20 blur-3xl" />
         <div className="grid items-center gap-5 md:grid-cols-2">
           <div>
-            <p className="mb-2 text-xs uppercase tracking-[0.25em] text-muted">AI SaaS Platform</p>
             <h1 className="heading-font text-4xl leading-tight text-ink sm:text-5xl">
               Document Intelligence Platform
             </h1>
