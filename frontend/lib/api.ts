@@ -1,6 +1,8 @@
 import type { Book, BookListResponse, BookStats, RagAnswer } from "@/types";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000/api";
+let API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000/api";
+if (API_BASE.endsWith("/")) API_BASE = API_BASE.slice(0, -1);
+if (!API_BASE.endsWith("/api")) API_BASE += "/api";
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, {
