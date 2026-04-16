@@ -101,7 +101,7 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 12,
 }
 
-CORS_ALLOW_ALL_ORIGINS = os.getenv("CORS_ALLOW_ALL", "true").lower() == "true"
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Robust CORS allowed origins logic
 cors_origins = os.getenv("CORS_ALLOWED_ORIGINS", "")
