@@ -98,6 +98,17 @@ REST_FRAMEWORK = {
 
 CORS_ALLOW_ALL_ORIGINS = os.getenv("CORS_ALLOW_ALL", "true").lower() == "true"
 
+# Robust CORS allowed origins logic
+cors_origins = os.getenv("CORS_ALLOWED_ORIGINS", "")
+if cors_origins:
+    # Support comma or space separated values
+    if "," in cors_origins:
+        CORS_ALLOWED_ORIGINS = [o.strip().rstrip("/") for o in cors_origins.split(",") if o.strip()]
+    else:
+        CORS_ALLOWED_ORIGINS = [o.strip().rstrip("/") for o in cors_origins.split() if o.strip()]
+else:
+    CORS_ALLOWED_ORIGINS = []
+
 CACHE_TIMEOUT = int(os.getenv("CACHE_TIMEOUT_SECONDS", "900"))
 CACHES = {
     "default": {
